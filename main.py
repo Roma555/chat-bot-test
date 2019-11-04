@@ -9,7 +9,7 @@ import tensorflow as tf
 import random
 # import our chat-bot intents file
 import json
-with open('intents.json') as json_data:
+with open('intents_ukr.json') as json_data:
     intents = json.load(json_data)
 
 words = []
