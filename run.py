@@ -1,3 +1,14 @@
+# things we need for NLP
+import nltk
+from nltk.stem.lancaster import LancasterStemmer
+stemmer = LancasterStemmer()
+
+# things we need for Tensorflow
+import numpy as np
+import tflearn
+import tensorflow as tf
+import random
+
 # restore all of our data structures
 import pickle
 data = pickle.load( open( "training_data", "rb" ) )
@@ -11,8 +22,15 @@ import json
 with open('intents.json') as json_data:
     intents = json.load(json_data)
 
-# load our saved model
-model.load('./model.tflearn')
+# Build neural network
+net = tflearn.input_data(shape=[None, len(train_x[0])])
+net = tflearn.fully_connected(net, 8)
+net = tflearn.fully_connected(net, 8)
+net = tflearn.fully_connected(net, len(train_y[0]), activation='softmax')
+net = tflearn.regression(net)
+
+# Define model and setup tensorboard
+model = tflearn.DNN(net, tensorboard_dir='tflearn_logs')
 
 def clean_up_sentence(sentence):
     # tokenize the pattern
@@ -36,7 +54,12 @@ def bow(sentence, words, show_details=False):
 
     return(np.array(bag))
 
+# load our saved model
+model.load('./model.tflearn')
 
+
+# create a data structure to hold user context
+context = {}
 
 ERROR_THRESHOLD = 0.25
 def classify(sentence):
